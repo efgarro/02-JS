@@ -1,13 +1,15 @@
 function checkCashRegister(price, cash, cid) {
+    //
     const numMult = [1, 5, 10, 25, 100, 500, 1000, 2000, 10000];
     const price100 = price * 100;
     const cash100 = cash * 100;
-    const cid100 = cid.reduce((arrPrev, arrCurr) => {
-        arrCurr[1] = Math.round(arrCurr[1] * 100);
-        arrPrev.push(arrCurr);
-        return arrPrev;
+
+    const cid100 = cid.map((arrSub) => {
+        arrSub = [...arrSub];
+        arrSub[1] = Math.round(arrSub[1] * 100);
+        return arrSub;
     }, []);
-    let numPennies = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
     let changeArr100 = [
         ["PENNY", 0],
         ["NICKEL", 0],
@@ -19,11 +21,9 @@ function checkCashRegister(price, cash, cid) {
         ["TWENTY", 0],
         ["ONE HUNDRED", 0],
     ];
-    numPennies = numPennies.map((arrCorB, i) => {
-        return cid100[i][1] / numMult[i];
-    });
-    let changeOwed = cash100 - price100;
-    let sumOwed = cash100 - price100;
+
+    let changeOwed = cash100 - price100,
+        sumOwed = changeOwed;
 
     let registerCash = cid100.reduce((sum, arrSub) => {
         sum += arrSub[1];
@@ -40,27 +40,21 @@ function checkCashRegister(price, cash, cid) {
         }
     }
 
+    let changeArr = changeArr100.map((arrSub) => {
+        arrSub = [...arrSub];
+        arrSub[1] = arrSub[1] / 100;
+        return arrSub;
+    }, []);
+
     let changeArrSum = changeArr100.reduce((sum, arrSub) => {
         sum += arrSub[1];
         return sum;
     }, 0);
-    let changeArr = changeArr100.reduce((arrPrev, arrCurr) => {
-        arrCurr[1] = arrCurr[1] / 100;
-        arrPrev.push(arrCurr);
-        return arrPrev;
-    }, []);
 
-    // if ()
-    // console.log(numPennies);
-    console.log(cid100);
-    console.log(changeArr100);
-    console.log(changeArrSum);
-    console.log(changeArr);
-    // console.log(`Register Cash ${registerCash}`);
-    console.log(`Change Owed ${sumOwed}`);
     if (registerCash > sumOwed && changeArrSum === sumOwed) {
         changeArr = changeArr
             .reduce((arr, arrSub) => {
+                arrSub = [...arrSub];
                 if (arrSub[1] !== 0) {
                     arr.push(arrSub);
                     return arr;
@@ -72,12 +66,13 @@ function checkCashRegister(price, cash, cid) {
         return { status: "OPEN", change: changeArr };
     } else if (registerCash === sumOwed) {
         changeArr = changeArr.reduce((arr, arrSub) => {
+            arrSub = [...arrSub];
             arr.push(arrSub);
             return arr;
         }, []);
         return { status: "CLOSED", change: changeArr };
     } else if (registerCash < sumOwed || changeArrSum !== sumOwed) {
-        console.log("Inso");
+        // console.log("Inso");
         return { status: "INSUFFICIENT_FUNDS", change: [] };
     }
 } // end of checkCashRegister()
@@ -96,30 +91,30 @@ function checkCashRegister(price, cash, cid) {
 //     ])
 // );
 
-// console.log(
-//     checkCashRegister(3.26, 100, [
-//         ["PENNY", 1.01],
-//         ["NICKEL", 2.05],
-//         ["DIME", 3.1],
-//         ["QUARTER", 4.25],
-//         ["ONE", 90],
-//         ["FIVE", 55],
-//         ["TEN", 20],
-//         ["TWENTY", 60],
-//         ["ONE HUNDRED", 100],
-//     ])
-// );
-
 console.log(
-    checkCashRegister(19.5, 20, [
-        ["PENNY", 0.01],
-        ["NICKEL", 0],
-        ["DIME", 0],
-        ["QUARTER", 0],
-        ["ONE", 1],
-        ["FIVE", 0],
-        ["TEN", 0],
-        ["TWENTY", 0],
-        ["ONE HUNDRED", 0],
+    checkCashRegister(3.26, 100, [
+        ["PENNY", 1.01],
+        ["NICKEL", 2.05],
+        ["DIME", 3.1],
+        ["QUARTER", 4.25],
+        ["ONE", 90],
+        ["FIVE", 55],
+        ["TEN", 20],
+        ["TWENTY", 60],
+        ["ONE HUNDRED", 100],
     ])
 );
+
+// console.log(
+//     checkCashRegister(19.5, 20, [
+//         ["PENNY", 0.01],
+//         ["NICKEL", 0],
+//         ["DIME", 0],
+//         ["QUARTER", 0],
+//         ["ONE", 1],
+//         ["FIVE", 0],
+//         ["TEN", 0],
+//         ["TWENTY", 0],
+//         ["ONE HUNDRED", 0],
+//     ])
+// );
